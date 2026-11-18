@@ -1,1 +1,11 @@
-{"name":"RADA Video Prep Studio","short_name":"RADA Prep","start_url":".","display":"standalone","background_color":"#111111","theme_color":"#111111","description":"Prepare videos locally on your phone."}
+{
+  "name": "RADA Video Prep Studio",
+  "short_name": "RADA Prep",
+  "description": "Prepare videos locally on your device.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#111111",
+  "theme_color": "#111111",
+  "icons": [{ "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

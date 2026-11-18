@@ -1,29 +1,32 @@
 # RADA Video Prep Studio
 
-A separate, mobile-first browser utility for preparing videos locally on your device.
+Browser-based video converter. Videos are processed locally with FFmpeg.wasm and never uploaded.
 
-## What it does
-- Multi-file selection and sequential conversion.
-- MP4 container, H.264/AVC video, AAC audio, 30 fps, yuv420p.
-- Maximum 1080p dimensions, preserving aspect ratio (no stretching).
-- Keeps the original filename stem; output extension is `.mp4`.
-- Adds `(2)`, `(3)`, etc. only when output filenames collide.
-- Downloads each file individually or all prepared files.
-- Files are processed in the browser; no app backend or account is used.
+**Output:** MP4 · H.264 · AAC · 30 FPS · max 1080p (1920×1080 / 1080×1920) · yuv420p · SDR 8-bit. Aspect ratio is kept, no upscaling.
+Files that already match are repackaged without re-encoding (verified by probing the file with FFmpeg).
 
 ## Run locally
 ```bash
 npm install
-npm run dev
+npm run dev      # http://localhost:5173/ada-video-prep-studio/
+npm run build    # outputs dist/
+npm run preview
 ```
+`npm run dev` / `build` first copy the FFmpeg core from `node_modules/@ffmpeg/core` to `public/ffmpeg/` (served from your own origin, no CDN).
 
-## Build
-```bash
-npm run build
-```
-Upload this folder to a **new, separate GitHub repository**. It is not part of the RADA app repository.
+## Deploy (GitHub Pages)
+1. Repo → Settings → Pages → Source: **GitHub Actions**.
+2. Push to `main` (or run **Deploy Vite app to GitHub Pages** manually). The workflow builds and adds `.nojekyll`.
+3. Live at https://chocolatepapi123.github.io/ada-video-prep-studio/
 
-## Important mobile note
-FFmpeg WebAssembly is memory- and CPU-intensive. This app processes one file at a time; on a Samsung A23, start with a short clip. Keep the browser tab open and the phone awake. Very large files or unsupported source codecs may fail. The app needs internet for its first FFmpeg engine load from the public CDN; conversion itself runs locally after the engine loads.
+`vite.config.js` sets `base: '/ada-video-prep-studio/'`. If the repo name differs, change it there.
 
-The output preset is a conservative compatibility preset, not a guarantee for every third-party editor. Test the converted file in the target editor before relying on a batch.
+## FFmpeg configuration
+- `@ffmpeg/core` 0.12.10, the **single-threaded** build. No `SharedArrayBuffer`, COOP or COEP headers needed, so it works on GitHub Pages and mobile browsers.
+- Trade-off: slower than multi-threaded.
+
+## Limitations
+- WebAssembly memory is capped (~2 GB). Very large or long 4K files may fail; the app reports the error instead of faking success.
+- HDR sources (HLG/HDR10) become 8-bit SDR without tone-mapping, so colours may look flat.
+- Download all triggers sequential downloads; some mobile browsers ask permission for multiple downloads.
+- Keep the tab open and in the foreground while converting.
