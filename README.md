@@ -19,7 +19,7 @@ npm run preview
 2. Push to `main` (or run **Deploy Vite app to GitHub Pages** manually). The workflow builds and adds `.nojekyll`.
 3. Live at https://chocolatepapi123.github.io/ada-video-prep-studio/
 
-`vite.config.js` sets `base: '/ada-video-prep-studio/'`. If the repo name differs, change it there.
+`vite.config.js` reads the repo name from GitHub Actions (`GITHUB_REPOSITORY`) so the base path always matches; locally it defaults to `/ada-video-prep-studio/`.
 
 ## FFmpeg configuration
 - `@ffmpeg/core` 0.12.10, the **single-threaded** build. No `SharedArrayBuffer`, COOP or COEP headers needed, so it works on GitHub Pages and mobile browsers.
